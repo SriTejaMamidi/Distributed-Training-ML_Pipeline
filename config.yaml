@@ -1,0 +1,42 @@
+# DDP Training Configuration
+# Multi-node, Multi-GPU distributed training
+
+model:
+  name: "resnet50"
+  pretrained: true
+  num_classes: 1000
+
+training:
+  epochs: 100
+  batch_size: 32  # Per GPU
+  learning_rate: 0.1
+  momentum: 0.9
+  weight_decay: 0.0001
+  warmup_epochs: 5
+
+distributed:
+  backend: "nccl"  # NCCL for GPU
+  init_method: "env://"
+  timeout: 600  # seconds
+
+optimization:
+  gradient_checkpointing: true
+  mixed_precision: true  # AMP
+  gradient_accumulation_steps: 1
+  num_workers: 4
+  pin_memory: true
+
+checkpoint:
+  save_frequency: 10  # epochs
+  save_best: true
+  resume_from: null  # Set to checkpoint path to resume
+
+logging:
+  mlflow_enabled: true
+  tensorboard_enabled: true
+  log_frequency: 100  # steps
+  output_dir: "logs/"
+
+device:
+  cuda: true
+  seed: 42  # For reproducibility
